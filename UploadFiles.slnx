@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="UploadFiles.App/UploadFiles.App.csproj" />
+  <Project Path="UploadFiles.Domain/UploadFiles.Domain.csproj" />
+  <Project Path="UploadFiles.Infra/UploadFiles.Infra.csproj" />
+  <Project Path="UploadFiles.Api/UploadFiles.Api.csproj" />
+</Solution>
