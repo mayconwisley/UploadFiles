@@ -1,0 +1,2 @@
+Add-Migration V1 -Context "UploadFilesDbContext" -Project UploadFiles.Infra -StartupProject UploadFiles.Api -OutputDir "Migrations"
+Update-Database -Context "UploadFilesDbContext" -Project UploadFiles.Infra -StartupProject UploadFiles.Api
