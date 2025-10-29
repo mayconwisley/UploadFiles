@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="UploadFiles.App"/>
-    <InternalsVisibleTo Include="UploadFiles.Infra"/>
+    <InternalsVisibleTo Include="UploadFiles.App" />
+    <InternalsVisibleTo Include="UploadFiles.Infra" />
   </ItemGroup>
 
 </Project>

@@ -1,27 +1,28 @@
 ﻿using UploadFiles.App.Abstractions.Mediator;
-using UploadFiles.App.Dtos.PathFile;
+using UploadFiles.App.Dtos.User;
 using UploadFiles.App.Helpers.ExceptionHandler;
 using UploadFiles.Domain.Abstractions;
 using UploadFiles.Domain.Repositories;
 
-namespace UploadFiles.App.UseCases.PathFile.Update;
+namespace UploadFiles.App.UseCases.User.Update;
 
-public sealed class Handler(IPathFileRepository _pathFileRepository, IUnitOfWorks _unitOfWorks) : IRequestHandler<Command, Result<Response>>
+public sealed class Handler(IUserRepository _userRepository, IUnitOfWorks _unitOfWorks) : IRequestHandler<Command, Result<Response>>
 {
 	public async Task<Result<Response>> HandlerAsync(Command command, CancellationToken cancellationToken)
 	{
 		return await ExceptionHandler.TryAsync(async ct =>
 		{
-			var dto = command.PathFileUpdateDto;
+			var dto = command.UserUpdateDto;
 			if (dto is null)
-				return Result.Failure<Response>(Error.BadRequest("Dados inválidos para a atualização do local do arquivo"));
+				return Result.Failure<Response>(Error.BadRequest("Dados inválidos para a atualização do usuário"));
 
-			var getEntity = await _pathFileRepository.GetByIdAsync(dto.Id);
+			var getEntity = await _userRepository.GetByIdAsync(dto.Id);
 			if (getEntity is null)
 				return Result.Failure<Response>(Error.BadRequest($"Dados não encontrado para o id {dto.Id}"));
 
 			var updateEntity = getEntity.Update(
-				dto.PathFile
+				dto.Username,
+				dto.Password
 			);
 
 			if (updateEntity.IsFailure)
@@ -29,7 +30,7 @@ public sealed class Handler(IPathFileRepository _pathFileRepository, IUnitOfWork
 
 			await _unitOfWorks.CommitAsync();
 
-			return Result.Success(new Response(getEntity.ToPathFileOutputDto()));
+			return Result.Success(new Response(getEntity.ToUserOutputDto()));
 		}, cancellationToken);
 	}
 }

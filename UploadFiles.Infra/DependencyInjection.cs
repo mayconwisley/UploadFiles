@@ -11,13 +11,23 @@ namespace UploadFiles.Infra;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfra(this IServiceCollection services)
-    {
-        services.AddScoped<IMediator, Mediator.Mediator>();
-        services.AddScoped<IPathFileRepository, PathFileRepository>();
-        services.AddScoped<IUploadFileStorageService, UploadFileStorageService>();
-        services.AddScoped<IUnitOfWorks, UnitOfWorks>();
+	public static IServiceCollection AddInfra(this IServiceCollection services)
+	{
+		services.AddScoped<IMediator, Mediator.Mediator>();
+		services.AddScoped<IPathFileRepository, PathFileRepository>();
+		services.AddScoped<IUserRepository, UserRepository>();
+		services.AddScoped<IUploadFileStorageService, UploadFileStorageService>();
+		services.AddScoped<IEncriptionServices, EncriptionServices>();
+		services.AddScoped<IGenerateKeyServices, GenerateKeyServices>();
 
-        return services;
-    }
+		services.AddScoped<IUnitOfWorks, UnitOfWorks>();
+
+		services.AddSingleton<EncryptionSettingsServices>();
+
+		#region Enums
+		services.AddKeyedScoped<IEnunsServices, BytesEnumServices>("BytesEnum");
+		#endregion
+
+		return services;
+	}
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UploadFiles.Infra.Database;
 
@@ -10,9 +11,11 @@ using UploadFiles.Infra.Database;
 namespace UploadFiles.Infra.Migrations
 {
     [DbContext(typeof(UploadFilesDbContext))]
-    partial class UploadFilesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251028232807_V2")]
+    partial class V2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
