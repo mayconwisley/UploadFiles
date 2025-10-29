@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using UploadFiles.App.Abstractions.Mediator;
 using UploadFiles.App.Dtos.User;
@@ -13,6 +14,7 @@ using UpdateUserCommand = UploadFiles.App.UseCases.User.Update.Command;
 namespace UploadFiles.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 public class UserController(IMediator _mediator) : ControllerBase

@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using UploadFiles.App.Abstractions.Mediator;
@@ -10,11 +11,13 @@ using UploadFiles.Domain.Abstractions;
 namespace UploadFiles.Api.Controllers
 {
 	[ApiController]
+	[AllowAnonymous]
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiVersion}/[controller]")]
 	[Produces("application/json")]
 	public class GenerateKeyController(IMediator _mediator) : ControllerBase
 	{
+
 		[HttpGet("{bytes}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerateKeyDto))]
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Error))]
