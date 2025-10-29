@@ -3,7 +3,7 @@ using UploadFiles.Domain.Services;
 
 namespace UploadFiles.Infra.Services;
 
-public class EncriptionServices : IEncriptionServices
+public class EncryptionServices : IEncryptionServices
 {
 	public string Decrypt(string cipherText, string key, byte[] iv)
 	{

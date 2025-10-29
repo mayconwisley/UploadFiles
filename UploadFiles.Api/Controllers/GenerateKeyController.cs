@@ -15,7 +15,7 @@ namespace UploadFiles.Api.Controllers
 	[Produces("application/json")]
 	public class GenerateKeyController(IMediator _mediator) : ControllerBase
 	{
-		[HttpGet("{bytes:BytesEnum}")]
+		[HttpGet("{bytes}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerateKeyDto))]
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Error))]
 		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(Error))]

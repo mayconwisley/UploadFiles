@@ -1,6 +1,6 @@
 ﻿namespace UploadFiles.Domain.Services;
 
-public interface IEncriptionServices
+public interface IEncryptionServices
 {
 	string Encrypt(string plainText, string key, out byte[] iv);
 	string Decrypt(string cipherText, string key, byte[] iv);

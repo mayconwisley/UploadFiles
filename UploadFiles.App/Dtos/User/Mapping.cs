@@ -8,26 +8,14 @@ public static class Mapping
 		return [.. from user in users
 				   select new UserOutputDto(
 						user.Id,
-						user.Username,
-						user.Password
+						user.Username
 				   )
 		];
 	}
-	public static IEnumerable<Domain.Entities.User> ToListUserDto(this IEnumerable<UserOutputDto> userOutputDtos)
-		=> userOutputDtos.Select(s => s.ToUser());
-
-	public static Domain.Entities.User ToUser(this UserOutputDto userOutputDto)
-		=> new(
-			userOutputDto.Id,
-			userOutputDto.Username,
-			userOutputDto.Password
-		);
-
 	public static UserOutputDto ToUserOutputDto(this Domain.Entities.User userOutputDto)
 		=> new(
 			userOutputDto.Id,
-			userOutputDto.Username,
-			userOutputDto.Password
+			userOutputDto.Username
 		);
 	#endregion
 

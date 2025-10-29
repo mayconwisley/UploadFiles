@@ -1,8 +1,10 @@
-﻿namespace UploadFiles.Infra.Services;
+﻿using UploadFiles.Domain.Services;
 
-public class EncryptionSettingsServices
+namespace UploadFiles.Infra.Services;
+
+public class EncryptionSettingsServices : IEncryptionSettingsServices
 {
-	public string? Key { get; private set; }
+	public string? Key { get; }
 	public EncryptionSettingsServices()
 	{
 		Key = Environment.GetEnvironmentVariable("UploadFilesKey", EnvironmentVariableTarget.Machine) ??
