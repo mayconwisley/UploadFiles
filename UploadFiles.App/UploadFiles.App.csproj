@@ -15,4 +15,8 @@
     <ProjectReference Include="..\UploadFiles.Domain\UploadFiles.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\Login\" />
+  </ItemGroup>
+
 </Project>
