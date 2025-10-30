@@ -2,7 +2,7 @@
 
 namespace UploadFiles.Domain.Services;
 
-public interface IEnunsServices
+public interface IEnunsService
 {
 	List<EnumsGeneric> GetAllEnums();
 }

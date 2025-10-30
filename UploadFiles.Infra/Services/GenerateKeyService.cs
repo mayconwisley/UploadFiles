@@ -3,10 +3,11 @@ using UploadFiles.Domain.Services;
 
 namespace UploadFiles.Infra.Services;
 
-public sealed class GenerateKeyServices : IGenerateKeyServices
+public sealed class GenerateKeyService : IGenerateKeyService
 {
-	public Task<string> GetGenerateKey(byte[] bytes)
+	public Task<string> GetGenerateKey()
 	{
+		var bytes = new byte[32];
 		using RandomNumberGenerator rng = RandomNumberGenerator.Create();
 		rng.GetBytes(bytes);
 		string key = Convert.ToBase64String(bytes);

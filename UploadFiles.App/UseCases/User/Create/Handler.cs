@@ -7,8 +7,8 @@ using UploadFiles.Domain.Services;
 
 namespace UploadFiles.App.UseCases.User.Create;
 
-public sealed class Handler(IUserRepository _userRepository, IEncryptionServices _encryptionServices,
-	IEncryptionSettingsServices _encryptionSettingsServices, IUnitOfWorks _unitOfWorks) : IRequestHandler<Command, Result<Response>>
+public sealed class Handler(IUserRepository _userRepository, IEncryptionService _encryptionServices,
+	IEncryptionSettingsService _encryptionSettingsServices, IUnitOfWorks _unitOfWorks) : IRequestHandler<Command, Result<Response>>
 {
 	public async Task<Result<Response>> HandlerAsync(Command command, CancellationToken cancellationToken)
 	{

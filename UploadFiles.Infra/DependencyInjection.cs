@@ -17,15 +17,17 @@ public static class DependencyInjection
 		services.AddScoped<IPathFileRepository, PathFileRepository>();
 		services.AddScoped<IUserRepository, UserRepository>();
 		services.AddScoped<IUploadFileStorageService, UploadFileStorageService>();
-		services.AddScoped<IEncryptionServices, EncryptionServices>();
-		services.AddScoped<IGenerateKeyServices, GenerateKeyServices>();
+		services.AddScoped<IEncryptionService, EncryptionService>();
+		services.AddScoped<IGenerateKeyService, GenerateKeyService>();
+		services.AddScoped<IValidateLogin, ValidateLogin>();
+		services.AddScoped<IGetTokenService, GetTokenService>();
 
 		services.AddScoped<IUnitOfWorks, UnitOfWorks>();
 
-		services.AddSingleton<IEncryptionSettingsServices, EncryptionSettingsServices>();
+		services.AddSingleton<IEncryptionSettingsService, EncryptionSettingsService>();
 
 		#region Enums
-		services.AddKeyedScoped<IEnunsServices, BytesEnumServices>("BytesEnum");
+		services.AddKeyedScoped<IEnunsService, BytesEnumServices>("BytesEnum");
 		#endregion
 
 		return services;

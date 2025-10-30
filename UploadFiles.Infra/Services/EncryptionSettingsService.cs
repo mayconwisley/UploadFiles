@@ -2,10 +2,10 @@
 
 namespace UploadFiles.Infra.Services;
 
-public class EncryptionSettingsServices : IEncryptionSettingsServices
+public class EncryptionSettingsService : IEncryptionSettingsService
 {
 	public string? Key { get; }
-	public EncryptionSettingsServices()
+	public EncryptionSettingsService()
 	{
 		Key = Environment.GetEnvironmentVariable("UploadFilesKey", EnvironmentVariableTarget.Machine) ??
 			throw new InvalidOperationException("Variavel de Ambiente 'UploadFilesKey' não encontrada");

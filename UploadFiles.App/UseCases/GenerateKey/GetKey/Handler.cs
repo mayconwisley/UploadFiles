@@ -6,15 +6,13 @@ using UploadFiles.Domain.Services;
 
 namespace UploadFiles.App.UseCases.GenerateKey.GetKey;
 
-public sealed class Handler(IGenerateKeyServices _generateKeyServices) : IRequestHandler<Command, Result<Response>>
+public sealed class Handler(IGenerateKeyService _generateKeyServices) : IRequestHandler<Command, Result<Response>>
 {
 	public async Task<Result<Response>> HandlerAsync(Command command, CancellationToken cancellationToken)
 	{
 		return await ExceptionHandler.TryAsync(async ct =>
 		{
-			var bytes = new byte[(int)command.BytesEnum];
-
-			var getKey = await _generateKeyServices.GetGenerateKey(bytes);
+			var getKey = await _generateKeyServices.GetGenerateKey();
 			if (getKey is null)
 				return Result.Failure<Response>(Error.NullValue("Sem dados para exibir"));
 			var key = new GenerateKeyDto(getKey);

@@ -1,4 +1,6 @@
-﻿namespace UploadFiles.App.Dtos.User;
+﻿using UploadFiles.App.Dtos.Login;
+
+namespace UploadFiles.App.Dtos.User;
 
 public static class Mapping
 {
@@ -39,6 +41,14 @@ public static class Mapping
 			userUpdateDto.Id,
 			userUpdateDto.Username,
 			userUpdateDto.Password
+		);
+	#endregion
+
+	#region Login
+	public static Domain.Entities.User ToUser(this LoginDto loginDto)
+		=> new(
+			loginDto.Username,
+			loginDto.Password
 		);
 	#endregion
 }

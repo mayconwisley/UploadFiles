@@ -5,7 +5,7 @@ using UploadFiles.Domain.Services;
 
 namespace UploadFiles.Infra.Services
 {
-	public class BytesEnumServices : IEnunsServices
+	public class BytesEnumServices : IEnunsService
 	{
 		public List<EnumsGeneric> GetAllEnums()
 		{

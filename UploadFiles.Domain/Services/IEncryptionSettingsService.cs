@@ -1,6 +1,6 @@
 ﻿namespace UploadFiles.Domain.Services;
 
-public interface IEncryptionSettingsServices
+public interface IEncryptionSettingsService
 {
 	public string? Key { get; }
 }
