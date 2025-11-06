@@ -21,103 +21,131 @@ builder.Services.AddInfra();
 
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
-	x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-	x.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-	x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-	x.JsonSerializerOptions.WriteIndented = true;
-	x.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All);
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    x.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    x.JsonSerializerOptions.WriteIndented = true;
+    x.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All);
 });
 
 builder.Services.AddApiVersioning(options =>
 {
-	options.DefaultApiVersion = new ApiVersion(1, 0);
-	options.AssumeDefaultVersionWhenUnspecified = true;
-	options.ReportApiVersions = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
 })
-	.AddApiExplorer(options =>
+    .AddApiExplorer(options =>
 {
-	options.GroupNameFormat = "'v'VVV";
-	options.SubstituteApiVersionInUrl = true;
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
 });
 
 var versionsApi = new[] { "v1" };
 foreach (var version in versionsApi)
 {
-	builder.Services.AddOpenApi(version, op =>
-	{
-		op.AddDocumentTransformer((document, context, _) =>
-		{
-			var provider = context.ApplicationServices
-				.GetRequiredService<IApiVersionDescriptionProvider>();
-			var desc = provider.ApiVersionDescriptions.FirstOrDefault(x => x.GroupName == version);
+    builder.Services.AddOpenApi(version, op =>
+    {
+        op.AddDocumentTransformer((document, context, _) =>
+        {
+            var provider = context.ApplicationServices
+                .GetRequiredService<IApiVersionDescriptionProvider>();
+            var desc = provider.ApiVersionDescriptions.FirstOrDefault(x => x.GroupName == version);
 
-			document.Info.Version = desc?.ApiVersion.ToString();
-			return Task.CompletedTask;
-		});
-	});
+            document.Info.Version = desc?.ApiVersion.ToString();
+            // Adicionar esquema de segurança JWT
+            document.Components ??= new();
+            document.Components.SecuritySchemes = new Dictionary<string, Microsoft.OpenApi.Models.OpenApiSecurityScheme>
+            {
+                ["Bearer"] = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Description = "Insira o token JWT no formato: Bearer {seu_token}"
+                }
+            };
+
+            // Aplicar segurança globalmente
+            document.SecurityRequirements =
+            [
+                new()
+                {
+                    [new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                     {
+                         Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                         {
+                             Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                             Id = "Bearer"
+                         }
+                     }] = []
+                }
+            ];
+            return Task.CompletedTask;
+        });
+    });
 }
 builder.WebHost.UseKestrel(op => op.AddServerHeader = false);
 
 builder.Services.AddDbContext<UploadFilesDbContext>(op =>
 {
-	op.UseSqlite(
-	UploadFilesDbConnection.SQL_CONNECTION,
-	b => b.MigrationsAssembly("UploadFiles.Infra")
-	.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+    op.UseSqlite(
+    UploadFilesDbConnection.SQL_CONNECTION,
+    b => b.MigrationsAssembly("UploadFiles.Infra")
+    .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-	.AddJwtBearer(options =>
-	{
-		options.TokenValidationParameters = new TokenValidationParameters
-		{
-			ValidateIssuer = true,
-			ValidateAudience = false,
-			ValidateLifetime = false,
-			ValidateIssuerSigningKey = true,
-			ValidIssuer = builder.Configuration["Jwt:Issuer"],
-			ValidAudience = builder.Configuration["Jwt:Audience"],
-			IssuerSigningKey = new SymmetricSecurityKey(
-				Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-		};
-	});
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = false,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
 
 builder.Services.AddAuthorizationBuilder()
-	.SetDefaultPolicy(new AuthorizationPolicyBuilder()
-		.RequireAuthenticatedUser()
-		.Build()
-	);
+    .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build()
+    );
 
 var app = builder.Build();
 app.Use(async (context, next) =>
 {
-	await next();
+    await next();
 
-	if (context.Response.StatusCode == StatusCodes.Status405MethodNotAllowed)
-	{
-		context.Response.ContentType = "application/json";
-		var result = Result.Failure(Error.MethodNotAllowed("Metodo não implementado ou não permitido"));
-		await context.Response.WriteAsJsonAsync(result.Error);
-	}
-	if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
-	{
-		context.Response.ContentType = "application/json";
-		var result = Result.Failure(Error.Unauthorized("Não autorizado"));
-		await context.Response.WriteAsJsonAsync(result.Error);
-	}
+    if (context.Response.StatusCode == StatusCodes.Status405MethodNotAllowed)
+    {
+        context.Response.ContentType = "application/json";
+        var result = Result.Failure(Error.MethodNotAllowed("Metodo não implementado ou não permitido"));
+        await context.Response.WriteAsJsonAsync(result.Error);
+    }
+    if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+    {
+        context.Response.ContentType = "application/json";
+        var result = Result.Failure(Error.Unauthorized("Não autorizado"));
+        await context.Response.WriteAsJsonAsync(result.Error);
+    }
 });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.MapOpenApi();
-	app.MapScalarApiReference(opt =>
-	{
-		opt.AddDocuments("v1");
-		opt.WithTitle("Upload Files")
-		   .WithTheme(ScalarTheme.BluePlanet)
-		   .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios);
-	});
+    app.MapOpenApi();
+    app.MapScalarApiReference(opt =>
+    {
+        opt.AddDocuments("v1");
+        opt.WithTitle("Upload Files")
+           .WithTheme(ScalarTheme.BluePlanet)
+           .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios);
+    });
 }
 
 app.UseHttpsRedirection();
